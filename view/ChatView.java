@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.swing.BoxLayout.Y_AXIS;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 /**
@@ -35,7 +36,7 @@ public class ChatView implements ActionListener{
     JScrollPane usersScroller;
     JScrollPane messagesScroller;
     DefaultListModel messagesModel;
-    JList messages;
+    JPanel messages;
     JTextArea messageText;
     JTextArea messageSender;
     
@@ -60,8 +61,10 @@ public class ChatView implements ActionListener{
     private void addWidgets(){
         GridBagConstraints constraints = new GridBagConstraints();
         
-        messagesModel = new DefaultListModel();
-        messages = new JList(messagesModel);
+        messages = new JPanel();
+        messages.setLayout(new BoxLayout(messages, Y_AXIS));
+        //messagesModel = new DefaultListModel();
+       // messages = new JList(messagesModel);
         messagesScroller = new JScrollPane(messages);
         this.setConstraints(messagesScroller, constraints, 0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.BOTH);
         
@@ -105,7 +108,7 @@ public class ChatView implements ActionListener{
             messageSent = new JPanel();
             messageText = new JTextArea(message);
             messageSent.add(messageText);
-            messagesModel.addElement(messageSent);
+            messages.add(messageSent, Component.RIGHT_ALIGNMENT);
         } else {
             messageReceived = new JPanel(new GridLayout(2, 1));
             messageSender = new JTextArea(nick);
@@ -113,7 +116,7 @@ public class ChatView implements ActionListener{
             messageText = new JTextArea(message);
             messageReceived.add(messageSender);
             messageReceived.add(messageText);            
-            messagesModel.addElement(messageReceived);
+            messages.add(messageReceived, Component.LEFT_ALIGNMENT);
         }
     }
     
