@@ -5,9 +5,7 @@
  */
 package chat.view;
 
-import Practica1.EditableBufferedReader;
 import chat.controller.ServerController;
-import chat.model.Server;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;

@@ -5,7 +5,6 @@
  */
 package chat.model;
 
-import Practica1.*;
 import chat.view.ChatView;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +20,7 @@ import java.util.regex.MatchResult;
 public class Client {
     
     MySocket s;
-    String liniar, liniaw;
+    String liniar;
     ChatView view;
     
     public Client(String nick, int port, ChatView cv){
@@ -39,13 +38,13 @@ public class Client {
     }
     
     public void close(){
+        s.write_str("EOF");
         s.close();
     }
     
     class Read extends Thread {
 
         Scanner scanner;
-        String line;
         String sender;
         ChatView view;
         

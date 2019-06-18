@@ -7,7 +7,6 @@ package chat.model;
 
 import java.io.IOException;
 import java.util.HashMap;
-import Practica1.*;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -102,7 +101,6 @@ public class Server {
                     s.setNick(nick);
                     server.writeInClients("new:" + nick, "server");
                     server.sendList(nick);
-                    System.out.println(nick);
                 } catch (IOException e) {
 
                 } finally {
@@ -114,6 +112,8 @@ public class Server {
                 try {
                     String line = in.readLine();
                     if ("EOF".equals(line)) {
+                        clients.remove(s.nick);
+                        server.writeInClients("del:" + s.nick, "server");
                         s.close();
                     } else {
                         r.lock();

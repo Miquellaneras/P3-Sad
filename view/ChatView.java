@@ -5,7 +5,6 @@
  */
 package chat.view;
 
-import Practica1.EditableBufferedReader;
 import chat.controller.ClientController;
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +15,7 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.swing.BoxLayout.Y_AXIS;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 /**
@@ -28,19 +28,11 @@ public class ChatView implements ActionListener{
     JPanel chatPanel;
     DefaultListModel usersModel;
     JList users;
-    JPanel messageSent;
-    JPanel messageReceived;
     JButton sendButton;
     JTextField textEntry;
+    JScrollPane usersScroller, messagesScroller;
+    JTextArea messages;
     ClientController controller;
-    JScrollPane usersScroller;
-    JScrollPane messagesScroller;
-    DefaultListModel messagesModel;
-    JPanel messages;
-    JTextArea messageText;
-    JTextArea messageSender;
-    
-    
     
     public ChatView(){
         chatFrame = new JFrame("chatSad");
@@ -49,23 +41,28 @@ public class ChatView implements ActionListener{
         chatPanel = new JPanel();
         chatPanel.setLayout(new GridBagLayout());
         this.addWidgets();
+        
         chatFrame.add(chatPanel, BorderLayout.CENTER);
         chatFrame.getRootPane().setDefaultButton(sendButton);
-        
         chatFrame.setSize(800, 600);
         chatFrame.setVisible(true);
         
         this.controller = new ClientController();
+
+        chatFrame.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                controller.close();
+            }
+        });       
     }
     
     private void addWidgets(){
         GridBagConstraints constraints = new GridBagConstraints();
         
-        messages = new JPanel();
-        messages.setLayout(new BoxLayout(messages, Y_AXIS));
-        //messagesModel = new DefaultListModel();
-       // messages = new JList(messagesModel);
-        messagesScroller = new JScrollPane(messages);
+        messages = new JTextArea();
+        messages.setLineWrap(true);
+        messages.setEditable(false);
+        messagesScroller = new JScrollPane(messages, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.setConstraints(messagesScroller, constraints, 0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.BOTH);
         
         textEntry = new JTextField();
@@ -78,7 +75,8 @@ public class ChatView implements ActionListener{
         usersModel = new DefaultListModel();
         users = new JList(usersModel);
         usersScroller = new JScrollPane(users);
-        this.setConstraints(usersScroller, constraints, 2, 0, 1, 2, 0.3, 1.0, GridBagConstraints.BOTH); 
+        usersScroller.setBorder(new TitledBorder("Users Online"));
+        this.setConstraints(usersScroller, constraints, 2, 0, 1, 2, 0.5, 1.0, GridBagConstraints.BOTH); 
     }
     
     
@@ -105,19 +103,12 @@ public class ChatView implements ActionListener{
     
     public void addMessage(String message, String nick){
         if(nick == null){
-            messageSent = new JPanel();
-            messageText = new JTextArea(message);
-            messageSent.add(messageText);
-            messages.add(messageSent, Component.RIGHT_ALIGNMENT);
+            messages.append(message + "\n");
         } else {
-            messageReceived = new JPanel(new GridLayout(2, 1));
-            messageSender = new JTextArea(nick);
-            messageSender.setFont(messageSender.getFont().deriveFont(Font.BOLD));
-            messageText = new JTextArea(message);
-            messageReceived.add(messageSender);
-            messageReceived.add(messageText);            
-            messages.add(messageReceived, Component.LEFT_ALIGNMENT);
+            messages.append(nick.toUpperCase() + "> " + message + "\n");
         }
+        messages.revalidate();
+        messages.repaint();
     }
     
 
@@ -136,17 +127,15 @@ public class ChatView implements ActionListener{
         }
         ChatView chat = new ChatView();   
         chat.controller.initClient(args, chat);
-
     }
+    
     
     public static void main(final String[] args){
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run(){
                 createAndShowGUI(args);
             }
-        });
-        //cv.controller.close();
+        });     
     }
 }
-
 
